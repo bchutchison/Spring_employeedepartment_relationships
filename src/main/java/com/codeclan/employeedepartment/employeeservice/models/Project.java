@@ -1,7 +1,11 @@
 package com.codeclan.employeedepartment.employeeservice.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "projects")
@@ -9,17 +13,39 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+
     private Long id;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "numberOfDays")
     private int numberOfDays;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "employees_projects",
+            joinColumns = { @JoinColumn(
+                    name = "project_id",
+                    nullable = false,
+                    updatable = false)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(
+                            name = "employee_id",
+                            nullable = false,
+                            updatable = false)
+            }
+    )
+    private List<Employee> employees;
 
 
     public Project(String name, int numberOfDays) {
         this.name = name;
         this.numberOfDays = numberOfDays;
+        this.employees = new ArrayList<>();
+
     }
 
     public Project() {
@@ -48,4 +74,10 @@ public class Project {
     public void setNumberOfDays(int numberOfDays) {
         this.numberOfDays = numberOfDays;
     }
+
+    public void addEmployee(Employee employee){
+        this.employees.add(employee);
+    }
+
+
 }
